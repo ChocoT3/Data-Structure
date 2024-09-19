@@ -1,33 +1,67 @@
 #define	_CRT_SECURE_NO_WARNINGS
 #include"BinaryTree.h"
-
-int main()
+void PrevOrder(BTNode* root)
 {
-	BTNode* A = (BTNode*)malloc(sizeof(BTNode));
-	A->data = 'A';
-	A->left = A->right = NULL;
-	BTNode* B = (BTNode*)malloc(sizeof(BTNode));
-	B->data = 'B';
-	B->left = B->right = NULL;
-	BTNode* C = (BTNode*)malloc(sizeof(BTNode));
-	C->data = 'C';
-	C->left = C->right = NULL;
-	BTNode* D = (BTNode*)malloc(sizeof(BTNode));
-	D->data = 'D';
-	D->left = D->right = NULL;
-	BTNode* E = (BTNode*)malloc(sizeof(BTNode));
-	E->data = 'E';
-	E->left = E->right = NULL;
-	A->left = B;
-	A->right = C;
-	B->left = D;
-	B->right = E;
-
-	PrevOrder(A);
+	if (root == NULL)
+	{
+		printf("NULL ");
+		return;
+	}
+	printf("%c ", root->data);
+	PrevOrder(root->left);
+	PrevOrder(root->right);
+}
+void InOrder(BTNode* root)
+{
+	if (root == NULL)
+	{
+		printf("NULL ");
+		return;
+	}
+	InOrder(root->left);
+	printf("%c ", root->data);
+	InOrder(root->right);
+}
+void PostOrder(BTNode* root)
+{
+	if (root == NULL)
+	{
+		printf("NULL ");
+		return;
+	}
+	PostOrder(root->left);
+	PostOrder(root->right);
+	printf("%c ", root->data);
+}
+int TreeSize(BTNode* root)
+{
+	return root == NULL ? 0 : TreeSize(root->left) + TreeSize(root->right) + 1;
+}
+int TreeLeafSize(BTNode* root)
+{
+	if (root == NULL)
+		return 0;
+	if (root->left == NULL && root->right == NULL)
+		return 1;
+	return TreeLeafSize(root->left) + TreeLeafSize(root->right);
+}
+void LevelOrder(BTNode* root)
+{
+	Queue q;
+	QueueInit(&q);
+	
+	if (root)
+		QueuePush(&q, root);
+	while (!QueueEmpty(&q))
+	{
+		QDataType front = QueueFront(&q);
+		QueuePop(&q);
+		printf("%c ", front->data);
+		if (root->left)
+			QueuePush(&q, front->left);
+		if (root->right)
+			QueuePush(&q, front->right);
+	}
 	printf("\n");
-	InOrder(A);
-	printf("\n");
-	PostOrder(A);
-	printf("\n");
-	return 0;
+	QueueDestory(&q);
 }
