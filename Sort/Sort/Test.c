@@ -67,29 +67,48 @@ void Swap(int* dst, int* src)
 	*src = tmp;
 }
 
-void AdjustDown(int* a, int n, int root)
+void  SelectSort(int* a, int n)
 {
-	int parent = root;
-	int child = parent * 2 + 1;
-	while(child < n)
-	if (child+1<n && a[child] < a[child + 1])
+	//int left = 0, right = n - 1;
+	//while (left < right)
+	//{
+	//	int min = left, max = right;
+	//	for (int i = left; i <= right; i++)
+	//	{
+	//		if (a[i] < a[min])
+	//		{
+	//			min = i;
+	//		}
+	//		if (a[i] > a[max])
+	//		{
+	//			max = i;
+	//		}
+	//	}
+	//	Swap(&a[left], &a[min]);
+	//	Swap(&a[right], &a[max]);
+	//	left++;
+	//	right--;
+	//}
+	for (int i = 0; i < n; i++)
 	{
-		child += 1;
-	}
-	else
-	{
-		if (a[child] > a[parent])
+		int minIndex = i;
+		int j = i + 1;
+		for (j; j < n; j++)
 		{
-			Swap(&a[parent], &a[child]);
-			parent = child;
-			child = parent * 2 + 1;
+			if (a[j] < a[minIndex])
+			{
+				minIndex = j;
+			}
 		}
-		else
-		{
-			break; 
-		}
+		Swap(&a[i], &a[minIndex]);
 	}
 }
+
+void AdjustDown(int* a, int n, int root)
+{
+
+}
+//N*logN
 void HeapSort(int* a,int n)
 {
 	for (int i = (n - 1 - 1) / 2; i >= 0; --i)
@@ -105,14 +124,134 @@ void HeapSort(int* a,int n)
 	}
 
 }
-void TestHeapSort()
+
+void BubbleSort(int* a, int n)
 {
-	int a[] = { 3,5,2,7,8,6,1,9,4,0 };
-	HeapSort(a, sizeof(a) / sizeof(a[0]));
+	int right = n - 1;
+	while(right>0)
+	{
+		int flag = 0;
+		for (int i = 0; i < right; i++)
+		{
+			if (a[i] > a[i + 1])
+				Swap(&a[i], &a[i + 1]);
+			flag = 1;
+		}
+		if (flag == 0)
+			break;
+		right--;
+	}
+}
+
+int GetMinIndex(int* a, int left, int right)
+{
+	int mid = (left + right) >> 1;
+	if (a[left] > a[mid] && a[left] > a[right])
+	{
+		if (a[mid] > a[right])
+			return mid;
+		else
+			return right;
+	}
+	else if (a[left] < a[mid] && a[left] < a[right])
+	{
+		if (a[mid] > a[right])
+			return right;
+		else
+			return mid;
+	}
+	else
+		return left;
+}
+//挖坑法
+int PartSort1(int* a, int left, int right)
+{
+	int midIndex = GetMinIndex(a, left, right);
+	Swap(&a[left], &a[midIndex]);
+	int begin = left;
+	int end = right;
+	int pivot = begin;
+	int key = a[left];
+	while (begin < end)
+	{
+		while (begin < end && a[end] >= key)//必须>=，不然死循环
+			end--;
+		a[pivot] = a[end];
+		pivot = end;
+		while (begin < end && a[begin] <= key)
+			begin++;
+		a[pivot] = a[begin];
+		pivot = begin;
+	}
+	a[pivot] = key;
+	return pivot;
+}
+
+int PartSort2(int* a, int left, int right)
+{
+	int midIndex = GetMinIndex(a, left, right);
+	Swap(&a[left], &a[midIndex]);
+	int begin = left;
+	int end = right;
+	int keyi = left;
+	while (begin < end)
+	{
+		while (begin < end && a[begin] <= a[keyi])//必须>=，不然死循环
+		{
+			begin++;
+		}
+		while (begin < end && a[end] >= a[keyi])
+		{
+			end--;
+		}
+		Swap(&a[begin], &a[end]);
+	}
+	Swap(&a[left], &a[begin]);
+	return begin;
+}
+int PartSort3(int* a, int left, int right)
+{
+	int midIndex = GetMinIndex(a, left, right);
+	Swap(&a[left], &a[midIndex]);
+	int cur = left+1;
+	int prev = left;
+	int keyi = left;
+	while (cur <= right)
+	{
+		if (a[cur] < a[keyi] && ++prev != cur)
+			Swap(&a[prev], &a[cur]);
+		cur++;
+	}
+	Swap(&a[keyi], &a[prev]);
+	return prev;
+}
+
+//nlogn
+void QuickSort(int* a, int left,int right)
+{
+	if (left >= right)
+		return;
+	int keyIndex = PartSort3(a, left, right);//单趟排序
+	//小区间优化
+	if (keyIndex - left > 10)
+		QuickSort(a, left, keyIndex - 1);
+	else
+		InsertSort(a + left, keyIndex - 1 - left + 1);
+	if (right - (keyIndex + 1) > 10)
+		QuickSort(a, keyIndex + 1, right);
+	else
+		InsertSort(a + keyIndex + 1, right - (keyIndex + 1) + 1);
+}
+
+void TestQuickSort()
+{
+	int a[] = { 3,3,3,7,8,6,1,9,4,0 };
+	QuickSort(a, 0,sizeof(a) / sizeof(a[0])-1);
 	PrintArray(a, sizeof(a) / sizeof(a[0]));
 }
 int main()
 {
-	TestHeapSort();
+	TestQuickSort();
 	return 0;
 }
+
