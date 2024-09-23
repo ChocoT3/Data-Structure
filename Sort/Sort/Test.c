@@ -1,5 +1,7 @@
 #define	_CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 void PrintArray(int* a, int n)
 {
 	for (int i = 0; i < n; i++)
@@ -10,7 +12,7 @@ void PrintArray(int* a, int n)
 //Ê±¼ä¸´ÔÓ¶ÈO(n^2)
 void InsertSort(int* a, int n)
 {
-	for (int i = 0; i < n - 1; i++)
+	for (int i = 0; i < n-1; i++)
 	{
 		int end = i;
 		int tmp = a[end + 1];
@@ -243,15 +245,64 @@ void QuickSort(int* a, int left,int right)
 		InsertSort(a + keyIndex + 1, right - (keyIndex + 1) + 1);
 }
 
-void TestQuickSort()
+void _MergeSort(int* a, int left, int right,int* tmp)
 {
-	int a[] = { 3,3,3,7,8,6,1,9,4,0 };
-	QuickSort(a, 0,sizeof(a) / sizeof(a[0])-1);
+	if (left >= right)
+		return;
+	int mid = (left + right) >> 1;
+	_MergeSort(a, left, mid, tmp);
+	_MergeSort(a, mid + 1, right, tmp);
+	int begin1 = left, end1 = mid;
+	int begin2 = mid + 1, end2 = right;
+	int index = left;
+	while (begin1 <= end1 && begin2 <= end2)
+	{
+		if (a[begin1] < a[begin2])
+			tmp[index++] = a[begin1++];
+		else
+			tmp[index++] = a[begin2++];
+	}
+	while(begin1 <= end1)
+	{
+		tmp[index++] = a[begin1++];
+	}
+	while (begin2 <= end2)
+	{
+		tmp[index++] = a[begin2++];
+	}
+	//memcpy(a + left, tmp + left, sizeof(int) * (index - left));
+	for (int i = left; i <= right; i++)
+	{
+		a[i] = tmp[i];
+	}
+}
+
+void MergeSort(int* a, int n)
+{
+	int* tmp = (int*)malloc(sizeof(int) * n);
+	_MergeSort(a, 0, n - 1,tmp);
+	free(tmp);
+}
+
+void TestMergeSort()
+{
+	int a[] = { 3,2,5,7,8,6,1,9,4,0 };
+	MergeSort(a,sizeof(a) / sizeof(a[0]));
 	PrintArray(a, sizeof(a) / sizeof(a[0]));
 }
 int main()
 {
-	TestQuickSort();
+	//TestMergeSort();
+	int prev = 1;
+	int cur = 1;
+	int next = 0;
+	for (int i = 3; i <= 50; i++)
+	{
+		next = prev + cur;//2 3
+		prev = cur;//1 2
+		cur = next;//2 3
+	}
+	printf("%d ", next);
 	return 0;
 }
 
