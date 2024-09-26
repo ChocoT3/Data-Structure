@@ -1,0 +1,4 @@
+﻿  KMP.c
+C:\code\NewDataStrcut\KMP\KMP\KMP.c(31,15): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\code\NewDataStrcut\KMP\KMP\KMP.c(32,15): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+  KMP.vcxproj -> C:\code\NewDataStrcut\KMP\x64\Debug\KMP.exe
